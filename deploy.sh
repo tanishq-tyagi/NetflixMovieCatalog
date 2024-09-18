@@ -2,6 +2,12 @@
 set -e
 
 echo ""
+echo "Installing python3.12-venv..."
+echo "--------------------------------"
+sudo apt-get update 
+sudo apt-get install -y python3.12-venv
+
+echo ""
 echo "Creating a Python virtual environment..."
 echo "--------------------------------"
 python3 -m venv venv
