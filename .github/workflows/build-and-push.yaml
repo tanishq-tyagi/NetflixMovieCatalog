@@ -12,7 +12,7 @@ env:
   ECR_USERNAME: AWS
 
   # IMAGE_NAME: netflix-movie-catalog
-  ECR_REPOSITORY: ai-tsadok/netflix-catalog
+  ECR_REPOSITORY: ai-tanishq/netflix-catalog
   IMAGE_TAG: latest
 
 jobs:
