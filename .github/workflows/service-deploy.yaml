@@ -10,7 +10,6 @@ env:
   EC2_USER_NAME: ubuntu
   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }} 
   TARGET_DIR: /home/ubuntu/NetflixMovieCatalog
-  PRIVATE_KEY_PATH: .private_key.pem
 
 jobs:
   
@@ -25,27 +24,25 @@ jobs:
 
       - name: Setup SSH Key
         run: |
-          rm -f ${{ env.PRIVATE_KEY_PATH }}
-
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ${{ env.PRIVATE_KEY_PATH }}
-          chmod 400 ${{ env.PRIVATE_KEY_PATH }}
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > mykey.pem
+          chmod 400 mykey.pem
 
       - name: List files in EC2 instance
         run: |
-          ssh -o StrictHostKeyChecking=no -i ${{ env.PRIVATE_KEY_PATH }} ${{ env.EC2_USER_NAME }}@${{ env.EC2_PUBLIC_ADDRESS }} "ls -la ~/"
+          ssh -o StrictHostKeyChecking=no -i mykey.pem ${{ env.EC2_USER_NAME }}@${{ env.EC2_PUBLIC_ADDRESS }} "ls -la ~/"
 
       - name: Copy files to EC2 instance
         run: |
 
-          ssh -o StrictHostKeyChecking=no -i ${{ env.PRIVATE_KEY_PATH }} ${{ env.EC2_USER_NAME }}@${{ env.EC2_PUBLIC_ADDRESS }} "mkdir -p ${{ env.TARGET_DIR }}"
+          ssh -o StrictHostKeyChecking=no -i mykey.pem ${{ env.EC2_USER_NAME }}@${{ env.EC2_PUBLIC_ADDRESS }} "mkdir -p ${{ env.TARGET_DIR }}"
 
-          scp -o StrictHostKeyChecking=no -i ${{ env.PRIVATE_KEY_PATH }} -r * ${{ env.EC2_USER_NAME }}@${{ env.EC2_PUBLIC_ADDRESS }}:${{ env.TARGET_DIR }}
+          scp -o StrictHostKeyChecking=no -i mykey.pem -r * ${{ env.EC2_USER_NAME }}@${{ env.EC2_PUBLIC_ADDRESS }}:${{ env.TARGET_DIR }}
 
-          ssh -o StrictHostKeyChecking=no -i ${{ env.PRIVATE_KEY_PATH }} ${{ env.EC2_USER_NAME }}@${{ env.EC2_PUBLIC_ADDRESS }} "ls -la ${{ env.TARGET_DIR }}"
+          ssh -o StrictHostKeyChecking=no -i mykey.pem ${{ env.EC2_USER_NAME }}@${{ env.EC2_PUBLIC_ADDRESS }} "ls -la ${{ env.TARGET_DIR }}"
 
       - name: Execute deployment script
         run: |
-          ssh -o StrictHostKeyChecking=no -i ${{ env.PRIVATE_KEY_PATH }} ${{ env.EC2_USER_NAME }}@${{ env.EC2_PUBLIC_ADDRESS }} "cd ${{ env.TARGET_DIR }};ls -l; chmod +x deploy.sh; ls -l; ./deploy.sh"
+          ssh -o StrictHostKeyChecking=no -i mykey.pem ${{ env.EC2_USER_NAME }}@${{ env.EC2_PUBLIC_ADDRESS }} "cd ${{ env.TARGET_DIR }};ls -l; chmod +x deploy.sh; ls -l; ./deploy.sh"
 
 
 
